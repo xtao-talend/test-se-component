@@ -1,0 +1,14 @@
+= A Component Family
+
+# Background
+
+This project aims to test if connector-se contains all needs to develop a new custom component as an end user.
+
+# TCK Plugin in intellij
+
+We can add TCK Plugin by following "settings -> plugins", search the "Talend component kit".
+
+# Data source
+
+JSON data source ->
+Open weathermap : https://openweathermap.org/history
