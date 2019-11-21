@@ -48,7 +48,7 @@ public class CityWeatherInputSource implements Serializable {
         // this method will be executed once for the whole component execution,
         // this is where you can establish a connection for instance
         //configuration.getDataset().getFormat();
-        RequestDataByAPI();
+        initDataSet(testDS);
     }
 
     private void RequestDataByAPI() {

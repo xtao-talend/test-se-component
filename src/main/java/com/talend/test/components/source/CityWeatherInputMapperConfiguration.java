@@ -19,12 +19,22 @@ public class CityWeatherInputMapperConfiguration implements Serializable {
     @Documentation("Data set")
     private WeatherDataset dataset;
 
+
+    @Option
+    @Documentation("Number of request")
+    private String number;
+
+    public String getNumber() {
+        return number;
+    }
+
     public WeatherDataset getDataset() {
         return dataset;
     }
 
-    public CityWeatherInputMapperConfiguration setDataset(WeatherDataset dataset) {
+    public CityWeatherInputMapperConfiguration setDataset(WeatherDataset dataset, String number) {
         this.dataset = dataset;
+        this.number = number;
         return this;
     }
 }
