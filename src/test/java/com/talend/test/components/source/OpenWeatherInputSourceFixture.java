@@ -3,7 +3,7 @@ package com.talend.test.components.source;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CompanyInputSourceFixture {
+class OpenWeatherInputSourceFixture {
 
     List<String> EXPECTED_DATA_STRING = createData();
 

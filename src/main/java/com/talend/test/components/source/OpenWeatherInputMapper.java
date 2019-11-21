@@ -16,25 +16,20 @@ import org.talend.sdk.component.api.input.Split;
 import org.talend.sdk.component.api.meta.Documentation;
 import org.talend.sdk.component.api.service.record.RecordBuilderFactory;
 
-import com.talend.test.components.service.TalendTestComponentService;
-
 //
 // this class role is to enable the work to be distributed in environments supporting it.
 //
 @Version(1) // default version is 1, if some configuration changes happen between 2 versions you can add a migrationHandler
 @Icon(Icon.IconType.STAR) // you can use a custom one using @Icon(value=CUSTOM, custom="filename") and adding icons/filename.svg in resources
-@PartitionMapper(name = "CityWeatherInput")
-@Documentation("")
-public class CityWeatherInputMapper implements Serializable {
-    private final CityWeatherInputMapperConfiguration configuration;
-    private final TalendTestComponentService service;
+@PartitionMapper(name = "OpenWeatherInput")
+@Documentation("OpenWeather Input")
+public class OpenWeatherInputMapper implements Serializable {
+    private final OpenWeatherInputMapperConfiguration configuration;
     private final RecordBuilderFactory recordBuilderFactory;
 
-    public CityWeatherInputMapper(@Option("configuration") final CityWeatherInputMapperConfiguration configuration,
-                                  final TalendTestComponentService service,
+    public OpenWeatherInputMapper(@Option("configuration") final OpenWeatherInputMapperConfiguration configuration,
                                   final RecordBuilderFactory recordBuilderFactory) {
         this.configuration = configuration;
-        this.service = service;
         this.recordBuilderFactory = recordBuilderFactory;
     }
 
@@ -47,7 +42,7 @@ public class CityWeatherInputMapper implements Serializable {
     }
 
     @Split
-    public List<CityWeatherInputMapper> split(@PartitionSize final long bundles) {
+    public List<OpenWeatherInputMapper> split(@PartitionSize final long bundles) {
         // overall idea here is to split the work related to configuration in bundles of size "bundles"
         //
         // for instance if your estimateSize() returned 1000 and you can run on 10 nodes
@@ -59,10 +54,10 @@ public class CityWeatherInputMapper implements Serializable {
     }
 
     @Emitter
-    public CityWeatherInputSource createWorker() {
+    public OpenWeatherInputSource createWorker() {
         // here we create an actual worker,
         // you are free to rework the configuration etc but our default generated implementation
         // propagates the partition mapper entries.
-        return new CityWeatherInputSource(configuration, service, recordBuilderFactory);
+        return new OpenWeatherInputSource(configuration, recordBuilderFactory);
     }
 }
