@@ -12,21 +12,22 @@ import org.talend.sdk.component.api.meta.Documentation;
 @GridLayout({
     // the generated layout put one configuration entry per line,
     // customize it as much as needed
-    @GridLayout.Row({ "ApplicationID" })
+    @GridLayout.Row({ "OpenWeatherAPIToken" })
 })
 @Documentation("OpenWeather DataStore")
 public class OpenWeatherDataStore implements Serializable {
+
     @Option
     @Required
-    @Documentation("Application ID to request OpenWeather")
-    private String ApplicationID;
+    @Documentation("OpenWeatherAPIToken")
+    private String OpenWeatherAPIToken;
 
-    public String getApplicationID() {
-        return ApplicationID;
+    public String getOpenWeatherAPIToken() {
+        return OpenWeatherAPIToken;
     }
 
-    public OpenWeatherDataStore setApplicationID(String applicationID) {
-        this.ApplicationID = applicationID;
+    public OpenWeatherDataStore setOpenWeatherAPIToken(String openWeatherAPIToken) {
+        this.OpenWeatherAPIToken = openWeatherAPIToken;
         return this;
     }
 }

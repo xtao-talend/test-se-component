@@ -3,6 +3,7 @@ package com.talend.test.components.source;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -48,35 +49,47 @@ public class OpenWeatherInputSource implements Serializable {
     public void init() {
         // this method will be executed once for the whole component execution,
         // this is where you can establish a connection for instance
+
+        // String url = "api.openweathermap.org/data/2.5/forecast?q=Paris,fr&APPID=5526449918b28c796d5b1cec497d01f0";
+       OpenWeatherRequest();
+    }
+
+    private void OpenWeatherRequest() {
         String city = configuration.getDataset().getCity();
         String country = configuration.getDataset().getCountryCode();
         String url = constructOpenWeatherURL(city, country);
-        // String url = "api.openweathermap.org/data/2.5/forecast?q=Paris,fr&APPID=5526449918b28c796d5b1cec497d01f0";
-        String jsonData;
-        if ((jsonData = OpenWeatherRequest(url)) != null) {
-            initDataSet(jsonData, city, country);
-        }
-    }
 
-    private String OpenWeatherRequest(String url) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
+        RuntimeException re = null;
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
             HttpEntity entity = response.getEntity();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+            int statusCode = response.getStatusLine().getStatusCode();
+            String message = response.getStatusLine().getReasonPhrase();
+            if (statusCode == 404 || statusCode == 401) {
+                re = new RuntimeException(message);
+                ArrayList<Record> record = new ArrayList<>();
+                Record errorRecord = builderFactory
+                        .newRecordBuilder()
+                        .withString("ErrorMessage", message)
+                        .build();
+                record.add(errorRecord);
+                iterator = record.iterator();
+            } else if (statusCode == 200) {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
 
-            String jsonData = "";
-            String line;
-            while ((line = rd.readLine()) != null) {
-                jsonData += line;
+                String jsonData = "";
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    jsonData += line;
+                }
+                initDataSet(jsonData, city, country);
             }
             response.close();
-            return jsonData;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw re != null ? re : new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
     private String constructOpenWeatherURL(String cityName, String countryCode) {
@@ -89,7 +102,7 @@ public class OpenWeatherInputSource implements Serializable {
                     .append(",")
                     .append(countryCode)
                     .append("&APPID=")
-                    .append(datastore.getApplicationID());
+                    .append(datastore.getOpenWeatherAPIToken());
             return stringBuilder.toString();
     }
 
@@ -121,7 +134,7 @@ public class OpenWeatherInputSource implements Serializable {
         recordBuilder.withString("city", weather.getT2());
         recordBuilder.withString("countryCode", weather.getT1());
         recordBuilder.withDateTime("date", weather.getT3());
-        recordBuilder.withDouble("degree", weather.getT4());
+        recordBuilder.withDouble("degree(°C)", weather.getT4());
         return recordBuilder.build();
     }
 
@@ -139,7 +152,7 @@ public class OpenWeatherInputSource implements Serializable {
     private Tuple4<String, String, Date, Double> getWeatherByDate(JsonValue weatherInformation, String city, String country) {
         JsonObject weather = weatherInformation.asObject();
         JsonObject mainFields = weather.get("main").asObject();
-        double degree = mainFields.get("temp").asDouble();
+        double degree = mainFields.get("temp").asDouble() - 273.15;
         Date dateTime = DataSourceParser.StringToDate(weather.get("dt_txt").asString());
         return Tuples.of(country, city, dateTime, degree);
     }
