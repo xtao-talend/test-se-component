@@ -24,7 +24,7 @@ mvn clean install
 mvn talend-component:car
 ----
 
-== Deploy
+== Build a docker image
 
 We have a tool image https://hub.docker.com/r/tacokit/remote-engine-customizer/tags[remote-engine-customizer],
 and we can run docker container with
