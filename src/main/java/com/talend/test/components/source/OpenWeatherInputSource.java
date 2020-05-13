@@ -50,7 +50,6 @@ public class OpenWeatherInputSource implements Serializable {
         // this method will be executed once for the whole component execution,
         // this is where you can establish a connection for instance
 
-        // String url = "api.openweathermap.org/data/2.5/forecast?q=Paris,fr&APPID=5526449918b28c796d5b1cec497d01f0";
        OpenWeatherRequest();
     }
 
